@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Synoptic Spire // 365-Day Volatility & Skyscraper Builder</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.8; filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.6)); }
+      50% { opacity: 1; filter: drop-shadow(0 0 18px rgba(129, 140, 248, 0.9)); }
+    }
+    .neon-spire {
+      animation: pulseGlow 3s ease-in-out infinite;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+    ::-webkit-scrollbar-thumb { background: rgba(56,189,248,0.4); border-radius: 3px; }
+  </style>
+</head>
+<body class="bg-[#0b0f19] text-slate-100 font-sans min-h-screen p-4 md:p-6 select-none overflow-x-hidden">
+
+  <!-- ================= TOP HEADER ================= -->
+  <header class="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between border-b border-slate-800 pb-4 mb-6 gap-4">
+    <div>
+      <div class="flex items-center gap-3">
+        <span class="px-2.5 py-1 text-xs font-mono font-bold bg-sky-500/20 text-sky-400 border border-sky-500/40 rounded">
+          PROJECT // THE SYNOPTIC SPIRE
+        </span>
+        <span class="text-xs font-mono text-emerald-400 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          LEGAL PERMITS: 100% CERTIFIED
+        </span>
+      </div>
+      <h1 class="text-2xl md:text-3xl font-black tracking-tight mt-1 text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-indigo-300 to-purple-400">
+        365-Day Volatility Damping &amp; High-Rise Architecture
+      </h1>
+      <p class="text-xs text-slate-400 mt-0.5 font-mono">
+        Architect: [PT:AC] Andy Kieckhefer · EU AI Act (2024/1689) · NIST AI RMF 1.0 · ISO/IEC 42001
+      </p>
+    </div>
+
+    <!-- Quick Stats Pill -->
+    <div class="flex items-center gap-4 bg-slate-900/80 border border-slate-800 px-4 py-2 rounded-xl text-xs font-mono">
+      <div>
+        <div class="text-slate-400 text-[10px]">HEIGHT / FLOORS</div>
+        <div class="text-sky-400 font-bold text-sm" id="hudHeight">0.0m / 0 fl</div>
+      </div>
+      <div class="w-px h-7 bg-slate-800"></div>
+      <div>
+        <div class="text-slate-400 text-[10px]">VOLATILITY INDEX</div>
+        <div class="text-amber-400 font-bold text-sm" id="hudVolatility">12.4% (Low)</div>
+      </div>
+      <div class="w-px h-7 bg-slate-800"></div>
+      <div>
+        <div class="text-slate-400 text-[10px]">TMD DAMPER</div>
+        <div class="text-purple-400 font-bold text-sm" id="hudDamper">STANDBY</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= MAIN WORKSPACE GRID ================= -->
+  <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- LEFT / CENTER: THE 3D SKYSCRAPER CANVAS (7 COLS) -->
+    <div class="lg:col-span-7 flex flex-col bg-slate-900/60 border border-slate-800 rounded-2xl p-4 backdrop-blur relative overflow-hidden shadow-2xl">
+      
+      <!-- Canvas Overlay Indicators -->
+      <div class="absolute top-6 left-6 z-10 pointer-events-none flex flex-col gap-2">
+        <div class="inline-flex items-center gap-2 bg-black/60 border border-slate-700/80 px-3 py-1.5 rounded-lg backdrop-blur">
+          <span class="text-base" id="weatherIcon">☀️</span>
+          <div>
+            <div class="text-[11px] font-bold text-slate-200" id="weatherCondText">Fair Skies &amp; Laminar Flow</div>
+            <div class="text-[9px] font-mono text-slate-400" id="weatherMetricsText">Temp: 64°F · Wind: 12 kts · 1014 hPa</div>
+          </div>
+        </div>
+
+        <div id="alertBanner" class="hidden inline-flex items-center gap-2 bg-amber-500/20 border border-amber-500/50 text-amber-300 px-3 py-1 rounded text-xs font-mono">
+          <span>⚠️</span>
+          <span id="alertMsg">Atmospheric Volatility High — TMD Damper Counter-Oscillation Active</span>
+        </div>
+      </div>
+
+      <!-- The Canvas -->
+      <div class="relative w-full h-[540px] rounded-xl overflow-hidden bg-gradient-to-b from-[#070b14] via-[#0d1424] to-[#131b2e] flex items-center justify-center">
+        <canvas id="spireCanvas" width="700" height="540" class="w-full h-full block"></canvas>
+      </div>
+
+      <!-- Playback Scrubber & Controls -->
+      <div class="mt-4 pt-4 border-t border-slate-800 flex flex-col gap-3">
+        <div class="flex items-center justify-between text-xs font-mono">
+          <span class="text-slate-400">CALENDAR DAY: <strong class="text-sky-400" id="dayLabel">Day 001 / 365</strong></span>
+          <span class="text-slate-400">PHASE: <strong class="text-purple-400" id="phaseLabel">Stage 0: Bedrock Caissons</strong></span>
+        </div>
+
+        <!-- Slider -->
+        <input 
+          type="range" 
+          id="daySlider" 
+          min="1" 
+          max="365" 
+          value="1" 
+          class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-sky-400"
+        />
+
+        <!-- Action Control Buttons -->
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+          <div class="flex items-center gap-2">
+            <button 
+              id="btnPlay" 
+              class="px-4 py-2 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold rounded-lg text-xs font-mono flex items-center gap-1.5 transition active:scale-95 shadow-lg shadow-sky-500/20">
+              <span id="playIcon">▶</span>
+              <span id="playText">START 365-DAY BUILD</span>
+            </button>
+
+            <button 
+              id="btnStorm" 
+              class="px-3 py-2 bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 border border-amber-500/40 rounded-lg text-xs font-mono transition">
+              🌪️ INJECT VOLATILE GALE
+            </button>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button 
+              id="btnAudio" 
+              class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-mono transition">
+              🔊 AUDIO: OFF
+            </button>
+            <button 
+              id="btnReset" 
+              class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-400 rounded-lg text-xs font-mono transition">
+              ↺ RESET
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: LEGAL COMPLIANCE STAMPS & VOLATILITY GAUGES (5 COLS) -->
+    <div class="lg:col-span-5 flex flex-col gap-6">
+
+      <!-- CARD 1: LEGAL COMPLIANCE PASSPORT & OFFICIAL STAMPS -->
+      <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 backdrop-blur shadow-xl">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-mono text-xs font-bold text-slate-300 flex items-center gap-2">
+            <span>⚖️</span> LEGAL COMPLIANCE DOSSIER
+          </h3>
+          <span class="text-[10px] font-mono bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">
+            ZERO-TRUST VERIFIED
+          </span>
+        </div>
+
+        <p class="text-xs text-slate-400 mb-4">
+          All architectural iterations are formally validated by continuous compliance sniffers before steel is hoisted.
+        </p>
+
+        <!-- Checklist of Stamped Articles -->
+        <div class="space-y-2 text-xs font-mono">
+          <!-- Item 1 -->
+          <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-800/40 border border-slate-800/80 transition" id="stampEu9">
+            <div class="flex items-center gap-2">
+              <span class="text-emerald-400 font-bold" id="checkEu9">✔</span>
+              <div>
+                <div class="text-slate-200 font-semibold">EU AI Act Art. 9 &amp; 10</div>
+                <div class="text-[10px] text-slate-400">Risk Management &amp; Data Lineage</div>
+              </div>
+            </div>
+            <span class="text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-800/60 px-1.5 py-0.5 rounded">PASSED</span>
+          </div>
+
+          <!-- Item 2 -->
+          <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-800/40 border border-slate-800/80 transition" id="stampNistGov">
+            <div class="flex items-center gap-2">
+              <span class="text-emerald-400 font-bold" id="checkNistGov">✔</span>
+              <div>
+                <div class="text-slate-200 font-semibold">NIST AI RMF (GOVERN / MAP)</div>
+                <div class="text-[10px] text-slate-400">Wind Tunnel Volatility Scoping</div>
+              </div>
+            </div>
+            <span class="text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-800/60 px-1.5 py-0.5 rounded">CERTIFIED</span>
+          </div>
+
+          <!-- Item 3 -->
+          <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-800/40 border border-slate-800/80 transition" id="stampEu11">
+            <div class="flex items-center gap-2">
+              <span class="text-slate-600 font-bold" id="checkEu11">○</span>
+              <div>
+                <div class="text-slate-200 font-semibold">EU AI Act Art. 11–15</div>
+                <div class="text-[10px] text-slate-400">Aerodynamic Facade &amp; Transparency</div>
+              </div>
+            </div>
+            <span class="text-[10px] text-slate-500" id="badgeEu11">PENDING FL 80</span>
+          </div>
+
+          <!-- Item 4 -->
+          <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-800/40 border border-slate-800/80 transition" id="stampNistManage">
+            <div class="flex items-center gap-2">
+              <span class="text-slate-600 font-bold" id="checkNistManage">○</span>
+              <div>
+                <div class="text-slate-200 font-semibold">NIST AI RMF (MEASURE / MANAGE)</div>
+                <div class="text-[10px] text-slate-400">TMD Damper Mitigation Intercept</div>
+              </div>
+            </div>
+            <span class="text-[10px] text-slate-500" id="badgeNistManage">PENDING TMD</span>
+          </div>
+
+          <!-- Item 5 -->
+          <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-800/40 border border-slate-800/80 transition" id="stampOccupancy">
+            <div class="flex items-center gap-2">
+              <span class="text-slate-600 font-bold" id="checkOccupancy">○</span>
+              <div>
+                <div class="text-slate-200 font-semibold">Certificate of Occupancy</div>
+                <div class="text-[10px] text-slate-400">Generational Commencement (828m)</div>
+              </div>
+            </div>
+            <span class="text-[10px] text-slate-500" id="badgeOccupancy">DAY 365</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 2: TUNED MASS DAMPER TELEMETRY & VOLATILITY DAMPING -->
+      <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 backdrop-blur shadow-xl">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-mono text-xs font-bold text-slate-300 flex items-center gap-2">
+            <span>⚡</span> VOLATILITY &amp; TMD TELEMETRY
+          </h3>
+          <span class="text-[10px] font-mono bg-purple-500/20 text-purple-400 border border-purple-500/30 px-2 py-0.5 rounded">
+            LEVEL 88 PENDULUM
+          </span>
+        </div>
+
+        <div class="space-y-4 text-xs font-mono">
+          <!-- Volatility Gauge -->
+          <div>
+            <div class="flex justify-between text-slate-400 mb-1">
+              <span>ATMOSPHERIC / RISK VOLATILITY</span>
+              <span id="txtVolPercent" class="text-sky-400 font-bold">12.4%</span>
+            </div>
+            <div class="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden">
+              <div id="barVol" class="h-full bg-gradient-to-r from-emerald-400 via-amber-400 to-rose-500 transition-all duration-300" style="width: 12.4%;"></div>
+            </div>
+          </div>
+
+          <!-- TMD Counter-Torque -->
+          <div>
+            <div class="flex justify-between text-slate-400 mb-1">
+              <span>DAMPER COUNTER-OSCILLATION</span>
+              <span id="txtDamperForce" class="text-purple-400 font-bold">0 N·m (Standby)</span>
+            </div>
+            <div class="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden">
+              <div id="barDamper" class="h-full bg-purple-500 transition-all duration-300" style="width: 5%;"></div>
+            </div>
+          </div>
+
+          <!-- Structural Health -->
+          <div>
+            <div class="flex justify-between text-slate-400 mb-1">
+              <span>STRUCTURAL INTEGRITY &amp; DURABILITY</span>
+              <span id="txtHealth" class="text-emerald-400 font-bold">100.0%</span>
+            </div>
+            <div class="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden">
+              <div id="barHealth" class="h-full bg-emerald-400 transition-all duration-300" style="width: 100%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Technical Description Callout -->
+        <div class="mt-4 p-3 bg-purple-950/20 border border-purple-800/40 rounded-xl text-[11px] text-slate-300 leading-relaxed">
+          <strong class="text-purple-300">How It Works:</strong> The 660-ton golden pendulum sways precisely out of phase with vortex-shedding winds and vendor schema deprecations, neutralizing over 42% of kinetic shock.
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ================= JAVASCRIPT SIMULATION LOGIC ================= -->
+  <script>
+    // Audio Synthesizer (Zero external dependencies)
+    let audioCtx = null;
+    let audioEnabled = false;
+
+    function playBeep(freq, type="sine", duration=0.15) {
+      if (!audioEnabled) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    // Simulation State
+    let currentDay = 1;
+    let isPlaying = false;
+    let timer = null;
+    let forcedStorm = false;
+
+    // Canvas & Render Setup
+    const canvas = document.getElementById("spireCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // Damper pendulum state
+    let damperAngle = 0;
+    let damperVelocity = 0;
+
+    // Rain / Wind particles
+    const particles = [];
+    for (let i = 0; i < 70; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        len: Math.random() * 14 + 6,
+        speed: Math.random() * 6 + 4
+      });
+    }
+
+    // DOM Elements
+    const daySlider = document.getElementById("daySlider");
+    const btnPlay = document.getElementById("btnPlay");
+    const playText = document.getElementById("playText");
+    const playIcon = document.getElementById("playIcon");
+    const btnStorm = document.getElementById("btnStorm");
+    const btnAudio = document.getElementById("btnAudio");
+    const btnReset = document.getElementById("btnReset");
+
+    const hudHeight = document.getElementById("hudHeight");
+    const hudVolatility = document.getElementById("hudVolatility");
+    const hudDamper = document.getElementById("hudDamper");
+    const dayLabel = document.getElementById("dayLabel");
+    const phaseLabel = document.getElementById("phaseLabel");
+    const weatherIcon = document.getElementById("weatherIcon");
+    const weatherCondText = document.getElementById("weatherCondText");
+    const weatherMetricsText = document.getElementById("weatherMetricsText");
+    const alertBanner = document.getElementById("alertBanner");
+    const alertMsg = document.getElementById("alertMsg");
+
+    const txtVolPercent = document.getElementById("txtVolPercent");
+    const barVol = document.getElementById("barVol");
+    const txtDamperForce = document.getElementById("txtDamperForce");
+    const barDamper = document.getElementById("barDamper");
+    const txtHealth = document.getElementById("txtHealth");
+    const barHealth = document.getElementById("barHealth");
+
+    // Weather calculation per day
+    function getWeather(day) {
+      if (forcedStorm) {
+        return {
+          condition: "Gale-Force Crosswind Storm",
+          icon: "🌪️",
+          temp: 42,
+          wind: 56,
+          pressure: 988,
+          volatility: 88.5,
+          isStorm: true
+        };
+      }
+
+      const annualAngle = (day / 365.0) * 2 * Math.PI;
+      const baseTemp = 58 - Math.cos(annualAngle) * 26;
+      let wind = 16 + Math.sin(day * 0.18) * 12 + (day % 17 === 0 ? 25 : 0);
+      let pressure = 1013 - Math.sin(day * 0.12) * 15;
+      
+      let condition = "Fair Skies & Laminar Flow";
+      let icon = "☀️";
+      let isStorm = false;
+
+      if (wind > 36 || (day >= 120 && day <= 135)) {
+        condition = "Gale Shear & Atmospheric Front";
+        icon = "🌪️";
+        isStorm = true;
+      } else if (day % 23 === 0) {
+        condition = "Severe Convective Thunderstorm";
+        icon = "⚡";
+        isStorm = true;
+      } else if (baseTemp < 32 && day < 80) {
+        condition = "Polar Vortex & Freezing Ice";
+        icon = "❄️";
+      } else if (baseTemp > 85 && day > 180 && day < 250) {
+        condition = "High-Pressure Solar Heat Dome";
+        icon = "🔥";
+      }
+
+      let volatility = Math.min(100, (wind * 1.5) + (isStorm ? 25 : 0));
+      return {
+        condition,
+        icon,
+        temp: Math.round(baseTemp),
+        wind: Math.round(wind),
+        pressure: Math.round(pressure),
+        volatility: Math.round(volatility * 10) / 10,
+        isStorm
+      };
+    }
+
+    function updateSimulation(day) {
+      currentDay = day;
+      daySlider.value = day;
+      dayLabel.innerText = `Day ${String(day).padStart(3, '0')} / 365`;
+
+      const weather = getWeather(day);
+      const height = Math.min(828, (day / 365.0) * 828.0);
+      const floors = Math.min(163, Math.floor((height / 828.0) * 163));
+
+      hudHeight.innerText = `${height.toFixed(1)}m / ${floors} fl`;
+      weatherIcon.innerText = weather.icon;
+      weatherCondText.innerText = weather.condition;
+      weatherMetricsText.innerText = `Temp: ${weather.temp}°F · Wind: ${weather.wind} kts · ${weather.pressure} hPa`;
+
+      // Volatility UI
+      hudVolatility.innerText = `${weather.volatility}% (${weather.volatility > 50 ? 'High' : (weather.volatility > 25 ? 'Moderate' : 'Low')})`;
+      txtVolPercent.innerText = `${weather.volatility}%`;
+      barVol.style.width = `${weather.volatility}%`;
+
+      // Damper logic
+      const damperActive = day >= 250;
+      if (damperActive) {
+        hudDamper.innerText = weather.isStorm ? "ACTIVE DAMPING" : "MONITORING";
+        hudDamper.className = weather.isStorm ? "text-amber-400 font-bold text-sm animate-pulse" : "text-purple-400 font-bold text-sm";
+        const force = Math.round(weather.wind * 14200);
+        txtDamperForce.innerText = `${force.toLocaleString()} N·m (-42% sway)`;
+        barDamper.style.width = `${Math.min(100, (force / 800000) * 100)}%`;
+      } else {
+        hudDamper.innerText = "STANDBY (FL 88)";
+        hudDamper.className = "text-slate-500 font-bold text-sm";
+        txtDamperForce.innerText = "0 N·m (Standby until L88)";
+        barDamper.style.width = "4%";
+      }
+
+      // Alert banner
+      if (weather.isStorm) {
+        alertBanner.classList.remove("hidden");
+        alertMsg.innerText = damperActive 
+          ? `Gale Wind: ${weather.wind} kts — TMD Counter-Oscillation Stabilizing Spire!`
+          : `Gale Wind: ${weather.wind} kts — Lockout Engaged; Iterating Interior Vaults.`;
+      } else {
+        alertBanner.classList.add("hidden");
+      }
+
+      // Legal Compliance Badges Checkmarks
+      updateComplianceStamps(day);
+
+      // Phase text
+      if (day <= 60) {
+        phaseLabel.innerText = "Stage 0: Bedrock Caissons & Piles";
+      } else if (day <= 150) {
+        phaseLabel.innerText = "Stage 1: Concrete Core & Podium";
+      } else if (day <= 250) {
+        phaseLabel.innerText = "Stage 2: Superstructure & Glass Curtain";
+      } else if (day <= 320) {
+        phaseLabel.innerText = "Stage 3: Tuned Mass Damper (L88)";
+      } else {
+        phaseLabel.innerText = "Stage 4: Crown Spire & Occupancy Cert";
+      }
+
+      if (day === 365) {
+        playBeep(587.33, "triangle", 0.4);
+        setTimeout(() => playBeep(880, "sine", 0.6), 250);
+      }
+    }
+
+    function updateComplianceStamps(day) {
+      // Art 11
+      const checkEu11 = document.getElementById("checkEu11");
+      const badgeEu11 = document.getElementById("badgeEu11");
+      if (day >= 150) {
+        checkEu11.innerText = "✔";
+        checkEu11.className = "text-emerald-400 font-bold";
+        badgeEu11.innerText = "PASSED";
+        badgeEu11.className = "text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-800/60 px-1.5 py-0.5 rounded";
+      } else {
+        checkEu11.innerText = "○";
+        checkEu11.className = "text-slate-600 font-bold";
+        badgeEu11.innerText = "PENDING FL 80";
+        badgeEu11.className = "text-[10px] text-slate-500";
+      }
+
+      // NIST Manage
+      const checkNistManage = document.getElementById("checkNistManage");
+      const badgeNistManage = document.getElementById("badgeNistManage");
+      if (day >= 250) {
+        checkNistManage.innerText = "✔";
+        checkNistManage.className = "text-emerald-400 font-bold";
+        badgeNistManage.innerText = "ENGAGED";
+        badgeNistManage.className = "text-[10px] bg-purple-950 text-purple-300 border border-purple-800/60 px-1.5 py-0.5 rounded";
+      } else {
+        checkNistManage.innerText = "○";
+        checkNistManage.className = "text-slate-600 font-bold";
+        badgeNistManage.innerText = "PENDING TMD";
+        badgeNistManage.className = "text-[10px] text-slate-500";
+      }
+
+      // Occupancy
+      const checkOccupancy = document.getElementById("checkOccupancy");
+      const badgeOccupancy = document.getElementById("badgeOccupancy");
+      if (day >= 365) {
+        checkOccupancy.innerText = "✔";
+        checkOccupancy.className = "text-emerald-400 font-bold";
+        badgeOccupancy.innerText = "ISSUED 🏆";
+        badgeOccupancy.className = "text-[10px] bg-emerald-500 text-slate-950 font-bold px-2 py-0.5 rounded";
+      } else {
+        checkOccupancy.innerText = "○";
+        checkOccupancy.className = "text-slate-600 font-bold";
+        badgeOccupancy.innerText = `DAY 365 (${365 - day}d left)`;
+        badgeOccupancy.className = "text-[10px] text-slate-500";
+      }
+    }
+
+    // ================= DRAWING ENGINE =================
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const weather = getWeather(currentDay);
+      const buildRatio = Math.min(1.0, currentDay / 365.0);
+
+      // 1. Draw Atmospheric Wind / Rain Particles
+      ctx.strokeStyle = weather.isStorm ? "rgba(56, 189, 248, 0.45)" : "rgba(255, 255, 255, 0.15)";
+      ctx.lineWidth = weather.isStorm ? 2 : 1;
+      for (let p of particles) {
+        ctx.beginPath();
+        const slant = weather.wind * 0.3;
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(p.x + slant, p.y + p.len);
+        ctx.stroke();
+
+        p.y += p.speed;
+        p.x += (weather.wind * 0.1);
+        if (p.y > canvas.height) { p.y = -10; p.x = Math.random() * canvas.width; }
+        if (p.x > canvas.width) { p.x = 0; }
+      }
+
+      // 2. Base Ground / Bedrock
+      ctx.fillStyle = "#1e293b";
+      ctx.fillRect(0, 500, canvas.width, 40);
+      ctx.strokeStyle = "#334155";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(0, 500, canvas.width, 40);
+
+      // Bedrock Caissons (Foundation)
+      ctx.strokeStyle = "#0284c7";
+      ctx.lineWidth = 5;
+      const caissonX = [280, 320, 350, 380, 420];
+      for (let cx of caissonX) {
+        ctx.beginPath();
+        ctx.moveTo(cx, 500);
+        ctx.lineTo(cx, 535);
+        ctx.stroke();
+      }
+
+      // 3. The Skyscraper Tower
+      const maxTowerHeight = 440; // max px height on canvas
+      const currentTowerPx = buildRatio * maxTowerHeight;
+      const baseY = 500;
+      const topY = baseY - currentTowerPx;
+      const centerX = 350;
+
+      // Draw Tower Sections depending on height
+      if (currentTowerPx > 5) {
+        // Base Podium Width: 140px, tapering to 30px at crown
+        const baseWidth = 140;
+        const topWidth = Math.max(26, baseWidth - (buildRatio * 110));
+
+        // Skyscraper body gradient
+        const towerGrad = ctx.createLinearGradient(centerX - baseWidth/2, baseY, centerX + baseWidth/2, topY);
+        towerGrad.addColorStop(0, "rgba(2, 132, 199, 0.3)");
+        towerGrad.addColorStop(0.5, "rgba(56, 189, 248, 0.6)");
+        towerGrad.addColorStop(1, "rgba(192, 132, 252, 0.75)");
+
+        ctx.beginPath();
+        ctx.moveTo(centerX - baseWidth/2, baseY);
+        ctx.lineTo(centerX - topWidth/2, topY);
+        ctx.lineTo(centerX + topWidth/2, topY);
+        ctx.lineTo(centerX + baseWidth/2, baseY);
+        ctx.closePath();
+
+        ctx.fillStyle = towerGrad;
+        ctx.fill();
+        ctx.strokeStyle = "#38bdf8";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Floor glass mullions
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.25)";
+        ctx.lineWidth = 1;
+        const numFloorsToDraw = Math.floor(buildRatio * 32);
+        for (let f = 1; f <= numFloorsToDraw; f++) {
+          const fy = baseY - (f / 32) * currentTowerPx;
+          const wAtY = baseWidth - ((baseY - fy) / maxTowerHeight) * 110;
+          ctx.beginPath();
+          ctx.moveTo(centerX - wAtY/2, fy);
+          ctx.lineTo(centerX + wAtY/2, fy);
+          ctx.stroke();
+        }
+
+        // Diagrid cross bracing
+        ctx.strokeStyle = "rgba(129, 140, 248, 0.35)";
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(centerX - baseWidth/2, baseY);
+        ctx.lineTo(centerX + topWidth/2, topY);
+        ctx.moveTo(centerX + baseWidth/2, baseY);
+        ctx.lineTo(centerX - topWidth/2, topY);
+        ctx.stroke();
+      }
+
+      // 4. Tuned Mass Damper (Appears at Level 88 when day >= 250)
+      if (currentDay >= 250) {
+        const damperY = baseY - (280 / 365.0) * maxTowerHeight;
+        
+        // Harmonic pendulum physics
+        const targetOffset = weather.isStorm ? Math.sin(Date.now() * 0.005) * 16 : Math.sin(Date.now() * 0.002) * 4;
+        damperAngle += (targetOffset - damperAngle) * 0.08;
+
+        // Cables
+        ctx.strokeStyle = "#f59e0b";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(centerX - 10, damperY - 20);
+        ctx.lineTo(centerX + damperAngle, damperY + 12);
+        ctx.moveTo(centerX + 10, damperY - 20);
+        ctx.lineTo(centerX + damperAngle, damperY + 12);
+        ctx.stroke();
+
+        // Golden Pendulum Ball
+        const goldGrad = ctx.createRadialGradient(
+          centerX + damperAngle - 4, damperY + 10, 2,
+          centerX + damperAngle, damperY + 12, 14
+        );
+        goldGrad.addColorStop(0, "#fef08a");
+        goldGrad.addColorStop(0.5, "#f59e0b");
+        goldGrad.addColorStop(1, "#92400e");
+
+        ctx.fillStyle = goldGrad;
+        ctx.beginPath();
+        ctx.arc(centerX + damperAngle, damperY + 12, 12, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#fef08a";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+
+      // 5. Crown Spire Needle (Appears in Stage 4, days 320–365)
+      if (currentDay >= 320) {
+        const spireProgress = (currentDay - 320) / 45.0;
+        const spireLength = spireProgress * 45;
+        
+        ctx.strokeStyle = "#f8fafc";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(centerX, topY);
+        ctx.lineTo(centerX, topY - spireLength);
+        ctx.stroke();
+
+        // Flashing Aviation Beacon
+        if (currentDay >= 350) {
+          const beaconFlash = (Math.sin(Date.now() * 0.008) + 1) / 2;
+          ctx.fillStyle = `rgba(244, 63, 94, ${beaconFlash})`;
+          ctx.beginPath();
+          ctx.arc(centerX, topY - spireLength, 5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // 6. Construction Crane (if not yet complete)
+      if (currentDay < 365) {
+        ctx.strokeStyle = "#f59e0b";
+        ctx.lineWidth = 2.5;
+        // Mast
+        ctx.beginPath();
+        ctx.moveTo(centerX + 12, topY);
+        ctx.lineTo(centerX + 12, topY - 30);
+        // Jib
+        ctx.lineTo(centerX + 45, topY - 30);
+        ctx.moveTo(centerX + 12, topY - 30);
+        ctx.lineTo(centerX - 15, topY - 30);
+        ctx.stroke();
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    // ================= EVENT LISTENERS =================
+    daySlider.addEventListener("input", (e) => {
+      forcedStorm = false;
+      updateSimulation(parseInt(e.target.value));
+    });
+
+    btnPlay.addEventListener("click", () => {
+      if (isPlaying) {
+        clearInterval(timer);
+        isPlaying = false;
+        playText.innerText = "RESUME BUILD";
+        playIcon.innerText = "▶";
+      } else {
+        if (currentDay >= 365) currentDay = 1;
+        isPlaying = true;
+        playText.innerText = "PAUSE SIMULATION";
+        playIcon.innerText = "⏸";
+
+        timer = setInterval(() => {
+          if (currentDay >= 365) {
+            clearInterval(timer);
+            isPlaying = false;
+            playText.innerText = "RESTART BUILD";
+            playIcon.innerText = "↺";
+            return;
+          }
+          currentDay++;
+          updateSimulation(currentDay);
+          if (currentDay % 15 === 0) playBeep(440, "sine", 0.08);
+        }, 80);
+      }
+    });
+
+    btnStorm.addEventListener("click", () => {
+      forcedStorm = !forcedStorm;
+      btnStorm.className = forcedStorm 
+        ? "px-3 py-2 bg-amber-500 text-slate-950 font-bold rounded-lg text-xs font-mono transition" 
+        : "px-3 py-2 bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 border border-amber-500/40 rounded-lg text-xs font-mono transition";
+      btnStorm.innerText = forcedStorm ? "🌪️ STORM ACTIVE" : "🌪️ INJECT VOLATILE GALE";
+      updateSimulation(currentDay);
+      playBeep(220, "sawtooth", 0.3);
+    });
+
+    btnAudio.addEventListener("click", () => {
+      audioEnabled = !audioEnabled;
+      btnAudio.innerText = audioEnabled ? "🔊 AUDIO: ON" : "🔇 AUDIO: OFF";
+      btnAudio.className = audioEnabled 
+        ? "px-3 py-2 bg-sky-500/20 border border-sky-500/40 text-sky-400 rounded-lg text-xs font-mono transition" 
+        : "px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-400 rounded-lg text-xs font-mono transition";
+      if (audioEnabled) playBeep(523.25, "sine", 0.15);
+    });
+
+    btnReset.addEventListener("click", () => {
+      clearInterval(timer);
+      isPlaying = false;
+      forcedStorm = false;
+      btnStorm.className = "px-3 py-2 bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 border border-amber-500/40 rounded-lg text-xs font-mono transition";
+      btnStorm.innerText = "🌪️ INJECT VOLATILE GALE";
+      playText.innerText = "START 365-DAY BUILD";
+      playIcon.innerText = "▶";
+      updateSimulation(1);
+    });
+
+    // Initial load
+    updateSimulation(1);
+    draw();
+  </script>
+</body>
+</html>

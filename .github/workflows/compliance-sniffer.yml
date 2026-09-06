@@ -1,0 +1,48 @@
+name: Google Gildan // Statutory Compliance & Risk Telemetry
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  schedule:
+    # Daily automated regulatory compliance audit at 06:00 UTC
+    - cron: '0 6 * * *'
+
+jobs:
+  audit-compliance:
+    name: Google Gildan // EU AI Act & NIST Sniffer Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Legal Compliance Sniffer
+        run: |
+          python scripts/compliance_sniffer.py --repo . --checkout COMPLIANCE_CHECKOUT.md --json-out compliance_report.json
+
+      - name: Evaluate Multi-Year Risk Velocity
+        run: |
+          python scripts/evaluate_risk_velocity.py --registry RISK_REGISTRY.md --compliance compliance_report.json --json-out telemetry_report.json
+
+      - name: Archive Historical Risk Assessment & Hallmark Monuments
+        run: |
+          python scripts/cicd_historical_archiver.py --repo . --ledger historical_projects_ledger.json --markdown HISTORICAL_PROJECTS.md
+
+      - name: Upload Audit Checkmarks & Historical Dossier Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: google-gildan-compliance-and-historical-dossier
+          path: |
+            COMPLIANCE_CHECKOUT.md
+            compliance_report.json
+            telemetry_report.json
+            historical_projects_ledger.json
+            HISTORICAL_PROJECTS.md
+            ICONIC_ARCHITECTURE.md

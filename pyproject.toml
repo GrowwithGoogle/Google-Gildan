@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "google-gildan"
+version = "1.0.0"
+description = "Google Gildan: The Heavyweight Global Infrastructure Production Vessel & Civil Inspection Engine (Powered by Risk-Forecast)"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [
+    {name = "Andy Kieckhefer [PT:AC]", email = "akieckhefer@users.noreply.github.com"}
+]
+keywords = [
+    "google-gildan",
+    "risk-forecast",
+    "civil-inspection",
+    "tuned-mass-damper",
+    "eu-ai-act",
+    "nist-ai-rmf",
+    "global-infrastructure"
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Quality Assurance",
+    "Topic :: System :: Hardware :: Symmetric Multi-processing",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.14",
+]
+
+[project.scripts]
+gildan = "play:main"
+google-gildan = "play:main"
+
+[project.urls]
+Homepage = "https://github.com/healthearthack/google-gildan"
+Repository = "https://github.com/healthearthack/google-gildan.git"
+"Bug Tracker" = "https://github.com/healthearthack/google-gildan/issues"
+"Documentation" = "https://github.com/healthearthack/google-gildan#readme"

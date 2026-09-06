@@ -1,0 +1,22 @@
+# Python bytecode & environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+ENV/
+
+# Secrets, private keys & zero-trust boundaries (GDPR Art. 25 & EU AI Act Art. 15)
+*.pem
+*.key
+*.cert
+*.env
+*.env.local
+.credentials/
+secrets.json
+
+# Build & Telemetry artifacts
+.coverage
+htmlcov/
+.pytest_cache/

@@ -1,0 +1,55 @@
+name: "🚨 Log Project Hazard & Breaking Point"
+description: "Report a newly anticipated pothole, traffic bottleneck, or road closure in the multi-year corridor."
+title: "[HAZARD]: "
+labels: ["hazard", "risk-forecast"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Project Hazard & Roadway Telemetry Ingress
+        Log anticipated friction points across the 18–60+ month rollout horizon.
+
+  - type: dropdown
+    id: condition_level
+    attributes:
+      label: Highway Condition Level
+      description: "Classify the severity of this risk encounter."
+      options:
+        - "🟢 Smooth Cruising (Minor observation)"
+        - "🟡 Pothole (Tooling drift, dependency lag, 15% drag)"
+        - "🟠 Traffic Gridlock (Multi-entity review delay, 40% drag)"
+        - "🔴 Road Closed (Breaking architectural failure, 100% stop)"
+        - "🌪️ Atmospheric Shock (Macro regulatory or budget pivot)"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: horizon_phase
+    attributes:
+      label: Target Horizon Phase
+      description: "Which stage of the multi-year build is impacted?"
+      options:
+        - "Stage 0 (Months 0–6: Initiation & Scope)"
+        - "Stage 1 (Months 6–18: Architectural Foundation)"
+        - "Stage 2 (Months 18–36: Enterprise Scale & Deep Build)"
+        - "Stage 3 (Months 36–60+: Full Commencement & Durability)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: breaking_point
+    attributes:
+      label: Projected Breaking Point
+      description: "Where and why does the system fail if left untreated?"
+      placeholder: "e.g., Upstream supplier deprecates REST endpoints in Month 28."
+    validations:
+      required: true
+
+  - type: textarea
+    id: detour_proposal
+    attributes:
+      label: Mandatory Detour / Mitigation Proposal
+      description: "How does the project bypass this obstacle without downtime?"
+      placeholder: "Deploy asynchronous dual-ingestion translation proxy bridge."
+    validations:
+      required: true

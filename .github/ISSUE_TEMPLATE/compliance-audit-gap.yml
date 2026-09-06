@@ -1,0 +1,46 @@
+name: "⚖️ Report Legal / Regulatory Compliance Gap"
+description: "Report a deficiency against the EU AI Act (2024/1689), NIST AI RMF 1.0, or ISO 42001."
+title: "[COMPLIANCE GAP]: "
+labels: ["compliance", "legal", "eu-ai-act", "nist-rmf"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Regulatory Compliance & AI Ethics Incident Report
+        Document any deviation from statutory mandates or risk management frameworks.
+
+  - type: dropdown
+    id: framework
+    attributes:
+      label: Applicable Regulatory Framework
+      options:
+        - "EU AI Act (Regulation (EU) 2024/1689)"
+        - "NIST AI Risk Management Framework (AI RMF 1.0)"
+        - "General Data Protection Regulation (GDPR Art. 25/32)"
+        - "ISO/IEC 42001 (AIMS Standard)"
+    validations:
+      required: true
+
+  - type: input
+    id: article_clause
+    attributes:
+      label: Specific Article / Clause / Control ID
+      placeholder: "e.g., EU AI Act Article 10 (Data Governance) or NIST GOVERN 1.1"
+    validations:
+      required: true
+
+  - type: textarea
+    id: gap_description
+    attributes:
+      label: Gap Description & Exposure
+      description: "Describe the observed deficiency and potential enforcement liability."
+    validations:
+      required: true
+
+  - type: textarea
+    id: remediation_plan
+    attributes:
+      label: Proposed Engineering Remediation
+      description: "Concrete technical actions required to achieve stamped compliance."
+    validations:
+      required: true
