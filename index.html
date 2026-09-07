@@ -74,6 +74,10 @@
         <div class="text-slate-400 text-[9px]">LEGAL ARMOR</div>
         <div class="text-cyan-300 font-bold">EU AI ACT [✔]</div>
       </div>
+      <div class="w-px h-6 bg-slate-800"></div>
+      <button id="btnOpenLeaderboard" class="px-2.5 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-lg text-[10px] font-bold transition flex items-center gap-1 shadow-md hover:scale-105 active:scale-95 cursor-pointer">
+        <span>🏆</span> LEADERBOARD
+      </button>
     </div>
   </header>
 
@@ -444,6 +448,71 @@
 
     </div>
   </main>
+
+  <!-- ================= GOOGLE GILDAN RISK-AVERSE LEADERBOARD MODAL ================= -->
+  <div id="modalLeaderboard" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-3 md:p-6">
+    <div class="hud-card max-w-4xl w-full rounded-2xl p-5 border border-amber-500/40 shadow-2xl shadow-amber-950/80 max-h-[90vh] flex flex-col">
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <span class="text-2xl">🏆</span>
+          <div>
+            <h2 class="text-base md:text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 font-mono">
+              GOOGLE GILDAN // RISK-AVERSE GLOBAL LEADERBOARD
+            </h2>
+            <p class="text-[10px] md:text-[11px] text-slate-400 font-mono">
+              The Golf Principle of Infrastructure: <strong>Lowest Net Risk Drag Score (%) = Highest Tempering &amp; Rank</strong>
+            </p>
+          </div>
+        </div>
+        <button id="btnCloseLeaderboard" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono text-xs font-bold transition">
+          ✕ CLOSE
+        </button>
+      </div>
+
+      <!-- Zone Filter Pills -->
+      <div class="flex flex-wrap items-center justify-between gap-2 my-3 text-xs font-mono">
+        <div class="flex items-center gap-1.5">
+          <span class="text-slate-400 text-[10px]">FILTER:</span>
+          <button id="btnFilterAll" class="px-2.5 py-1 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-bold">ALL</button>
+          <button id="btnFilterFarmland" class="px-2.5 py-1 rounded-md bg-slate-900 text-slate-400 hover:text-emerald-300 border border-slate-800 text-[10px] font-bold">🌾 FARMLAND</button>
+          <button id="btnFilterSuburban" class="px-2.5 py-1 rounded-md bg-slate-900 text-slate-400 hover:text-amber-300 border border-slate-800 text-[10px] font-bold">🏡 SUBURBAN</button>
+          <button id="btnFilterMetropolis" class="px-2.5 py-1 rounded-md bg-slate-900 text-slate-400 hover:text-sky-300 border border-slate-800 text-[10px] font-bold">🏙️ METROPOLIS</button>
+        </div>
+        <span class="text-[10px] text-emerald-400 font-mono flex items-center gap-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> 100% EU AI ACT &amp; NIST STAMPED
+        </span>
+      </div>
+
+      <!-- Leaderboard Table -->
+      <div class="overflow-y-auto flex-1 font-mono text-xs pr-1 border border-slate-800/80 rounded-xl bg-slate-950/60">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="text-[10px] text-slate-400 bg-slate-900/90 border-b border-slate-800 sticky top-0">
+              <th class="py-2.5 px-3">RANK</th>
+              <th class="py-2.5 px-3">PROJECT NAME</th>
+              <th class="py-2.5 px-3">ZONE</th>
+              <th class="py-2.5 px-3">CIVIL SCORE</th>
+              <th class="py-2.5 px-3 text-right">NET RISK SCORE</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboardRows" class="divide-y divide-slate-800/60">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="pt-3 mt-3 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs font-mono">
+        <div class="text-slate-400 text-[10px]">
+          CLI Audit &amp; Submit: <code class="bg-slate-900 px-1.5 py-0.5 rounded text-sky-300 border border-slate-800">python scripts/adopt_project.py inspect . --submit "My-Project"</code>
+        </div>
+        <button id="btnRankCurrentSim" class="px-3 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 rounded-lg text-[11px] font-bold transition flex items-center gap-1">
+          <span>⚡</span> RANK CURRENT SIMULATOR SESSION
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- ================= SIMULATOR JAVASCRIPT ================= -->
   <script>
@@ -1146,6 +1215,123 @@
       playIcon.innerText = "▶";
       updateDay(1);
     });
+
+    // ================= LEADERBOARD CONTROLLER =================
+    const modalLeaderboard = document.getElementById("modalLeaderboard");
+    const btnOpenLeaderboard = document.getElementById("btnOpenLeaderboard");
+    const btnCloseLeaderboard = document.getElementById("btnCloseLeaderboard");
+    const leaderboardRows = document.getElementById("leaderboardRows");
+    const btnFilterAll = document.getElementById("btnFilterAll");
+    const btnFilterFarmland = document.getElementById("btnFilterFarmland");
+    const btnFilterSuburban = document.getElementById("btnFilterSuburban");
+    const btnFilterMetropolis = document.getElementById("btnFilterMetropolis");
+    const btnRankCurrentSim = document.getElementById("btnRankCurrentSim");
+
+    let currentLeaderboardFilter = "all";
+    const leaderboardEntries = [
+      { rank: 1, name: "Google Titan HSM & 8.8.8.8 Anycast DNS", zone: "farmland", zoneLabel: "🌾 Farmland", civil: 99.2, risk: 0.8, status: "Indestructible Metamorphic Bedrock" },
+      { rank: 2, name: "Dunant Transoceanic Subsea Optical Mesh", zone: "farmland", zoneLabel: "🌾 Farmland", civil: 98.6, risk: 1.4, status: "Abyssal Pressure Shielded" },
+      { rank: 3, name: "Google Search Index & Ad Auction Core", zone: "farmland", zoneLabel: "🌾 Farmland", civil: 97.5, risk: 2.5, status: "Generational Durability" },
+      { rank: 4, name: "Google Cloud Spanner & IAM Paxos Root", zone: "suburban", zoneLabel: "🏡 Suburban", civil: 96.8, risk: 3.2, status: "Multi-Region Quorum" },
+      { rank: 5, name: "Google Gildan Sovereign Production Engine", zone: "metropolis", zoneLabel: "🏙️ Metropolis", civil: 95.0, risk: 5.0, status: "Level 4 Self-Healing" },
+      { rank: 6, name: "Firebase Realtime & Google Maps SDK", zone: "suburban", zoneLabel: "🏡 Suburban", civil: 91.2, risk: 8.8, status: "Buffered Concurrency" },
+      { rank: 7, name: "Partner GenAI Agentic Fintech Spire", zone: "metropolis", zoneLabel: "🏙️ Metropolis", civil: 84.5, risk: 15.5, status: "Level 88 Damper Active" },
+      { rank: 8, name: "Experimental Autonomous Microservice MVP", zone: "metropolis", zoneLabel: "🏙️ Metropolis", civil: 68.0, risk: 32.0, status: "High Weather Drag" }
+    ];
+
+    function renderLeaderboardTable() {
+      if (!leaderboardRows) return;
+      leaderboardRows.innerHTML = "";
+      
+      const filtered = currentLeaderboardFilter === "all" 
+        ? leaderboardEntries 
+        : leaderboardEntries.filter(e => e.zone === currentLeaderboardFilter);
+
+      filtered.forEach((entry, idx) => {
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-slate-900/80 transition font-mono";
+
+        const medal = entry.rank === 1 ? "🥇 #1" : (entry.rank === 2 ? "🥈 #2" : (entry.rank === 3 ? "🥉 #3" : `#${entry.rank}`));
+        const riskColor = entry.risk <= 5.0 ? "text-emerald-400 font-bold" : (entry.risk <= 15.0 ? "text-amber-400 font-bold" : "text-rose-400 font-bold");
+        const zoneBadgeClass = entry.zone === "farmland" ? "bg-emerald-950 text-emerald-300 border-emerald-800" : (entry.zone === "suburban" ? "bg-amber-950 text-amber-300 border-amber-800" : "bg-sky-950 text-sky-300 border-sky-800");
+
+        tr.innerHTML = `
+          <td class="py-2.5 px-3 font-bold text-amber-400">${medal}</td>
+          <td class="py-2.5 px-3">
+            <div class="text-slate-100 font-bold">${entry.name}</div>
+            <div class="text-[9px] text-slate-400">${entry.status}</div>
+          </td>
+          <td class="py-2.5 px-3">
+            <span class="px-1.5 py-0.5 rounded border text-[9px] ${zoneBadgeClass}">${entry.zoneLabel}</span>
+          </td>
+          <td class="py-2.5 px-3 font-bold text-slate-300">${entry.civil.toFixed(1)}%</td>
+          <td class="py-2.5 px-3 text-right ${riskColor} text-sm">${entry.risk.toFixed(1)}%</td>
+        `;
+        leaderboardRows.appendChild(tr);
+      });
+    }
+
+    if (btnOpenLeaderboard) {
+      btnOpenLeaderboard.addEventListener("click", () => {
+        renderLeaderboardTable();
+        modalLeaderboard.classList.remove("hidden");
+        playTone(587.33, "triangle", 0.15);
+      });
+    }
+
+    if (btnCloseLeaderboard) {
+      btnCloseLeaderboard.addEventListener("click", () => {
+        modalLeaderboard.classList.add("hidden");
+      });
+    }
+
+    function setLeaderboardFilter(filter) {
+      currentLeaderboardFilter = filter;
+      const btns = [btnFilterAll, btnFilterFarmland, btnFilterSuburban, btnFilterMetropolis];
+      btns.forEach(b => {
+        if (!b) return;
+        b.className = "px-2.5 py-1 rounded-md bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800 text-[10px] font-bold";
+      });
+      if (filter === "all" && btnFilterAll) btnFilterAll.className = "px-2.5 py-1 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-bold";
+      if (filter === "farmland" && btnFilterFarmland) btnFilterFarmland.className = "px-2.5 py-1 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-bold";
+      if (filter === "suburban" && btnFilterSuburban) btnFilterSuburban.className = "px-2.5 py-1 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-bold";
+      if (filter === "metropolis" && btnFilterMetropolis) btnFilterMetropolis.className = "px-2.5 py-1 rounded-md bg-sky-500/20 text-sky-300 border border-sky-500/40 text-[10px] font-bold";
+      renderLeaderboardTable();
+      playTone(440, "sine", 0.08);
+    }
+
+    if (btnFilterAll) btnFilterAll.addEventListener("click", () => setLeaderboardFilter("all"));
+    if (btnFilterFarmland) btnFilterFarmland.addEventListener("click", () => setLeaderboardFilter("farmland"));
+    if (btnFilterSuburban) btnFilterSuburban.addEventListener("click", () => setLeaderboardFilter("suburban"));
+    if (btnFilterMetropolis) btnFilterMetropolis.addEventListener("click", () => setLeaderboardFilter("metropolis"));
+
+    if (btnRankCurrentSim) {
+      btnRankCurrentSim.addEventListener("click", () => {
+        const simCivil = hp;
+        const simRisk = Math.max(0.0, 100.0 - hp);
+        
+        // Remove existing current session if present
+        const idx = leaderboardEntries.findIndex(e => e.name.includes("Current Active Session"));
+        if (idx >= 0) leaderboardEntries.splice(idx, 1);
+
+        leaderboardEntries.push({
+          rank: 99,
+          name: `Current Active Session (Day ${currentDay})`,
+          zone: currentZone,
+          zoneLabel: currentZone === "farmland" ? "🌾 Farmland" : (currentZone === "suburban" ? "🏡 Suburban" : "🏙️ Metropolis"),
+          civil: simCivil,
+          risk: parseFloat(simRisk.toFixed(1)),
+          status: `Active Build (${towerHeight.innerText})`
+        });
+
+        // Re-sort (LOWER IS BETTER!)
+        leaderboardEntries.sort((a, b) => a.risk - b.risk);
+        leaderboardEntries.forEach((e, i) => e.rank = i + 1);
+
+        renderLeaderboardTable();
+        playTone(659.25, "sine", 0.25);
+      });
+    }
 
     // Start
     updateDay(1);

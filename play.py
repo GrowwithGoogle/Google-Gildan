@@ -61,9 +61,9 @@ def print_banner():
 def launch_web_sim():
     print(f"\n{CYAN}🚀 Launching Google Gildan 3D Web Simulator in default browser...{RESET}")
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    sim_path = os.path.join(base_dir, "simulator.html")
+    sim_path = os.path.join(base_dir, "index.html")
     if not os.path.exists(sim_path):
-        sim_path = os.path.join(base_dir, "index.html")
+        sim_path = os.path.join(base_dir, "simulator.html")
     
     file_uri = f"file:///{sim_path.replace(os.sep, '/')}"
     print(f"{DIM}URI: {file_uri}{RESET}")
@@ -87,6 +87,12 @@ def run_civil_inspection():
     print(f"\n{SKY}{BOLD}🪜 RUNNING 4 CIVIL GAUGES INSPECTION ON LOCAL CODEBASE...{RESET}")
     script_path = os.path.join(os.path.dirname(__file__), "scripts", "adopt_project.py")
     subprocess.run([sys.executable, script_path, "inspect", "."])
+    input(f"\n{BOLD}Press [ENTER] to return to the Gildan Arcade Menu...{RESET}")
+
+def view_leaderboard():
+    print(f"\n{GOLD}{BOLD}🏆 OPENING GOOGLE GILDAN RISK-AVERSE GLOBAL LEADERBOARD...{RESET}")
+    script_path = os.path.join(os.path.dirname(__file__), "scripts", "adopt_project.py")
+    subprocess.run([sys.executable, script_path, "leaderboard"])
     input(f"\n{BOLD}Press [ENTER] to return to the Gildan Arcade Menu...{RESET}")
 
 def run_compliance_sniffer():
@@ -141,12 +147,13 @@ def main():
         print(f"  {BOLD}{RED}[2]{RESET} ⚔️ {BOLD}Act of War: Red-Team Siege Simulation{RESET} (Terminal Penetration Test Battle)")
         print(f"  {BOLD}{PURPLE}[3]{RESET} 🎮 {BOLD}Play 60-Month Highway Risk Runner RPG{RESET} (Navigate Compliance Potholes)")
         print(f"  {BOLD}{SKY}[4]{RESET} 🪜 {BOLD}Run 4 Civil Gauges Project Inspection{RESET} (Scaffolding, Windows, Lifts, Stairs)")
-        print(f"  {BOLD}{GREEN}[5]{RESET} ⚖️ {BOLD}Run Statutory Compliance Sniffer{RESET} (EU AI Act & NIST RMF 1.0 Audit)")
-        print(f"  {BOLD}{AMBER}[6]{RESET} 🌾 {BOLD}Explore Landscape Zoning Doctrine{RESET} (Farmland vs. Suburban vs. Metropolis)")
-        print(f"  {BOLD}{GOLD}[7]{RESET} 📜 {BOLD}View Master Application Dossier{RESET} (Leadership Resume for Google Infra)")
+        print(f"  {BOLD}{GOLD}[5]{RESET} 🏆 {BOLD}View Risk-Averse Global Leaderboard{RESET} (Lowest Net Risk Scores Rank Top)")
+        print(f"  {BOLD}{GREEN}[6]{RESET} ⚖️ {BOLD}Run Statutory Compliance Sniffer{RESET} (EU AI Act & NIST RMF 1.0 Audit)")
+        print(f"  {BOLD}{AMBER}[7]{RESET} 🌾 {BOLD}Explore Landscape Zoning Doctrine{RESET} (Farmland vs. Suburban vs. Metropolis)")
+        print(f"  {BOLD}{GOLD}[8]{RESET} 📜 {BOLD}View Master Application Dossier{RESET} (Leadership Resume for Google Infra)")
         print(f"  {BOLD}[Q]{RESET} 🚪 {BOLD}Exit Arcade{RESET}\n")
 
-        choice = input(f"{CYAN}{BOLD}Select an interactive simulation [1-7, Q]: {RESET}").strip().lower()
+        choice = input(f"{CYAN}{BOLD}Select an interactive simulation [1-8, Q]: {RESET}").strip().lower()
 
         if choice == "1":
             launch_web_sim()
@@ -157,16 +164,18 @@ def main():
         elif choice == "4":
             run_civil_inspection()
         elif choice == "5":
-            run_compliance_sniffer()
+            view_leaderboard()
         elif choice == "6":
-            view_landscape_zoning()
+            run_compliance_sniffer()
         elif choice == "7":
+            view_landscape_zoning()
+        elif choice == "8":
             view_master_dossier()
         elif choice in ["q", "quit", "exit"]:
             print(f"\n{GOLD}Exiting Google Gildan. May your structural caissons remain socketed to bedrock.{RESET}\n")
             break
         else:
-            print(f"{RED}Invalid selection. Please choose 1-7 or Q.{RESET}")
+            print(f"{RED}Invalid selection. Please choose 1-8 or Q.{RESET}")
             time.sleep(1)
 
 if __name__ == "__main__":
